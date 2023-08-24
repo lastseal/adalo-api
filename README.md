@@ -47,3 +47,17 @@ multimedia = api.Collection("t_bfmoi0f5mg6a1qj8crygzfami")
 items = multimedia.findAll()
 print(items)
 ```
+
+### Paso 4: Relacionar Colecciones
+
+```python
+companies = api.Collection("t_8ckhaq1iyfze15oc17pd9bde3").findAll(fields=["id", "Nombre"])
+
+multimedia = api.Collection("t_bfmoi0f5mg6a1qj8crygzfami", {
+    "Cia_receptora": [x.to_dict() for x in companies]
+})
+
+items = multimedia.findAll()
+
+for item in items:
+    print(item.to_dict())

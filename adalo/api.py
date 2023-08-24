@@ -77,14 +77,16 @@ class Session(requests.Session):
                 if not tmp:
                     break
 
-                if fields:
-                    for i in range( len(tmp) ):
-                        tmp[i] = {k: v for k, v in tmp[i].items() if k in fields}
-
                 if self.join is not None:
                     for record in tmp:
                         for key in self.join:
-                            record[key] = self.join[key]
+                            print(key)
+                            print(record)
+                            record[key] = next(x for x in self.join[key] if x['id'] == record[key][0] )
+
+                if fields:
+                    for i in range( len(tmp) ):
+                        tmp[i] = {k: v for k, v in tmp[i].items() if k in fields}
 
                 records += tmp
 
