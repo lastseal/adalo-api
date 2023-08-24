@@ -79,7 +79,7 @@ class Session(requests.Session):
 
                 if fields:
                     for item in tmp:
-                        for key in item:
+                        for key in item.keys():
                             if key not in fields:
                                 del item[key]
 
