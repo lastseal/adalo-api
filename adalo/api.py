@@ -3,16 +3,10 @@
 import requests
 import logging
 import json
-import jwt
 import os
 
-BASE_URL = os.getenv("BASE_URL")
-SECRET_KEY = os.getenv("SECRET_KEY")
-
-TOKEN = jwt.encode({
-    "scopes": [{"pattern": f".*/api/.*"}], 
-    "userkey": "0"
-}, SECRET_KEY, algorithm="HS256")
+API_KEY = os.getenv("API_KEY")
+APP_ID = os.getenv("APP_ID")
 
 ##
 #
@@ -53,7 +47,7 @@ class Session(requests.Session):
     def __init__(self, url):
         super().__init__()
         self.url = url
-        self.headers.update({"Authorization": f"Bearer {TOKEN}"})
+        self.headers.update({"Authorization": f"Bearer {API_KEY}"})
 
     def count(self, criteria=None, order=None, created_at_min=None, created_at_max=None):
 
@@ -151,4 +145,4 @@ class Session(requests.Session):
 class Collection(Session):
    
     def __init__(self, name):
-        super().__init__(f"{BASE_URL}/api/collections/{name}")
+        super().__init__(f"https://api.adalo.com/v0/apps/{APP_ID}/collections/{name}")
