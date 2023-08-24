@@ -33,11 +33,11 @@ class Record:
     def updated_at(self):
         return self.__dict__['updated_at']
 
-    def save(self):
-        return self.session.save(self.id, self.data)
+    # def save(self):
+    #     return self.session.save(self.id, self.data)
     
-    def remove(self):
-        return self.session.remove(self.id)
+    # def remove(self):
+    #     return self.session.remove(self.id)
 
     def to_dict(self):
         return self.__dict__
