@@ -52,7 +52,7 @@ class Session(requests.Session):
         self.join = join
         self.headers.update({"Authorization": f"Bearer {API_KEY}"})
         
-    def findAll(self, params={}):
+    def findAll(self, params={}, fields=[]):
 
         logging.debug("finding in %s with %s", self.url, params)
 
@@ -76,6 +76,12 @@ class Session(requests.Session):
 
                 if not tmp:
                     break
+
+                if fields:
+                    for item in tmp:
+                        for key in item:
+                            if key not in fields:
+                                del item[key]
 
                 if self.join is not None:
                     for record in tmp:
