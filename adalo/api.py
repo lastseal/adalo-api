@@ -79,7 +79,7 @@ class Session(requests.Session):
 
                 if fields:
                     for i in range( len(tmp) ):
-                        tmp[i] = {k: v for k, v in tmp[i].items() if k not in fields}
+                        tmp[i] = {k: v for k, v in tmp[i].items() if k in fields}
 
                 if self.join is not None:
                     for record in tmp:
