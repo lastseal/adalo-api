@@ -78,11 +78,8 @@ class Session(requests.Session):
                     break
 
                 if fields:
-                    for item in tmp:
-                        keys = item.keys()
-                        for key in keys:
-                            if key not in fields:
-                                del item[key]
+                    for i in range( len(tmp) ):
+                        tmp[i] = {k: v for k, v in tmp[i].items() if k not in fields}
 
                 if self.join is not None:
                     for record in tmp:
