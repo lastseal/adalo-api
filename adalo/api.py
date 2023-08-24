@@ -39,7 +39,7 @@ class Record:
     #     return self.session.remove(self.id)
 
     def to_dict(self):
-        return self.__dict__
+        return {k: v for k, v in self.__dict__.items() if k not in ["session"]}
 
 ##
 #
