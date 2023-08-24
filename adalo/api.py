@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*
 
+from datetime import datetime
+
 import requests
 import logging
 import json
+import time
 import os
 
 API_KEY = os.getenv("API_KEY")
@@ -48,54 +51,52 @@ class Session(requests.Session):
         super().__init__()
         self.url = url
         self.headers.update({"Authorization": f"Bearer {API_KEY}"})
-
-    def count(self, criteria=None, order=None, created_at_min=None, created_at_max=None):
-
-        params = {}
-
-        if criteria is not None:
-            params['criteria'] = json.dumps(criteria)
-
-        if created_at_min is not None:
-            params['created_at_min'] = created_at_min
-
-        if created_at_max is not None:
-            params['created_at_max'] = created_at_max
-
-        logging.debug("counting in %s with %s", self.url, params)
-       
-        res = self.get(f"{self.url}/count", params=params)
-
-        if res.status_code >= 400:
-            raise Exception(f"{res.status_code}: {res.text}")
         
-        logging.debug("res: %s", res.json())
-
-        return res.json()["count"]
-        
-    def findAll(self, criteria=None, order=None, created_at_min=None, created_at_max=None):
-
-        params = {}
-
-        if criteria is not None:
-            params['criteria'] = json.dumps(criteria)
-
-        if created_at_min is not None:
-            params['created_at_min'] = created_at_min
-
-        if created_at_max is not None:
-            params['created_at_max'] = created_at_max
+    def findAll(self, params=None):
 
         logging.debug("finding in %s with %s", self.url, params)
+
+        offset = 0
+        limit = 100
+        records = []
+
+        while True:
+
+            try:
+
+                logging.debug("get records offset %d limit %d", offset, limit)
+
+                res = self.get(self.url, params={"offset": offset, "limit": limit})
+
+                if res.status_code >= 400:
+                    logging.error(res.text)
+                    return
+
+                tmp = res.json()['records']
+
+                if not tmp:
+                    break
+
+                records += tmp
+
+                logging.debug("records found: %d", len(records))
+                logging.debug("X-Ratelimit-Limit: %s", res.headers['X-Ratelimit-Limit'])
+                logging.debug("X-Ratelimit-Remaining:  %s", res.headers['X-Ratelimit-Remaining'])
+                logging.debug("X-Ratelimit-Reset: %s", res.headers['X-Ratelimit-Reset'])
+
+                offset += limit
+
+            except Exception as ex:
+                logging.warning(ex)
+                raise ex
        
-        res = self.get(self.url, params=params)
+            time.sleep(0.01)
 
-        if res.status_code >= 400:
-            raise Exception(f"{res.status_code}: {res.text}")
-        
-        logging.debug("res: %s", res.json())
+        if "created_at_min" in params:
+            dt = datetime.fromisoformat(params['created_at_min'])
+            records = [x for x in records if datetime.fromisoformat(x['created_at'][:-1]) > dt ]
 
-        return [Record(x, self) for x in res.json()]
+        return [Record(x, self) for x in records]
     
     def findOne(self, criteria=None):
 
@@ -106,38 +107,38 @@ class Session(requests.Session):
         
         return data[0]
     
-    def create(self, data):
+    # def create(self, data):
 
-        logging.debug("creating in %s with %s", self.url, data)
+    #     logging.debug("creating in %s with %s", self.url, data)
        
-        res = self.post(self.url, json=data)
+    #     res = self.post(self.url, json=data)
 
-        if res.status_code >= 400:
-            raise Exception(f"{res.status_code}: {res.text}")
+    #     if res.status_code >= 400:
+    #         raise Exception(f"{res.status_code}: {res.text}")
 
-        return res.json()
+    #     return res.json()
     
-    def save(self, id, data):
+    # def save(self, id, data):
 
-        logging.debug("updating in %s/%s with %s", self.url, id, data)
+    #     logging.debug("updating in %s/%s with %s", self.url, id, data)
        
-        res = self.put(f"{self.url}/{id}", json=data)
+    #     res = self.put(f"{self.url}/{id}", json=data)
 
-        if res.status_code >= 400:
-            raise Exception(f"{res.status_code}: {res.text}")
+    #     if res.status_code >= 400:
+    #         raise Exception(f"{res.status_code}: {res.text}")
 
-        return res.json()
+    #     return res.json()
     
-    def remove(self, id):
+    # def remove(self, id):
 
-        logging.debug("removing in %s/%s", self.url, id)
+    #     logging.debug("removing in %s/%s", self.url, id)
        
-        res = self.delete(f"{self.url}/{id}")
+    #     res = self.delete(f"{self.url}/{id}")
 
-        if res.status_code >= 400:
-            raise Exception(f"{res.status_code}: {res.text}")
+    #     if res.status_code >= 400:
+    #         raise Exception(f"{res.status_code}: {res.text}")
 
-        return res.text
+    #     return res.text
 
 ##
 #

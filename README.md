@@ -35,7 +35,7 @@ Se buscan los datos de la colección de Adalo desde una fecha en adelante.
 ```python
 multimedia = api.Collection("t_bfmoi0f5mg6a1qj8crygzfami")
 
-items = multimedia.findAll({"created_at_min": "2023-07-26/00:00:00"})
+items = multimedia.findAll({"created_at_min": "2023-07-26T00:00:00"})
 print(items)
 ```
 
