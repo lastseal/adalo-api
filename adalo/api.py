@@ -4,7 +4,6 @@ from datetime import datetime
 
 import requests
 import logging
-import json
 import time
 import os
 
@@ -47,9 +46,10 @@ class Record:
 
 class Session(requests.Session):
    
-    def __init__(self, url):
+    def __init__(self, url, join):
         super().__init__()
         self.url = url
+        self.join = join
         self.headers.update({"Authorization": f"Bearer {API_KEY}"})
         
     def findAll(self, params={}):
@@ -76,6 +76,11 @@ class Session(requests.Session):
 
                 if not tmp:
                     break
+
+                if self.join is not None:
+                    for record in tmp:
+                        for key in self.join:
+                            record[key] = self.join[key]
 
                 records += tmp
 
@@ -145,5 +150,5 @@ class Session(requests.Session):
 
 class Collection(Session):
    
-    def __init__(self, name):
-        super().__init__(f"https://api.adalo.com/v0/apps/{APP_ID}/collections/{name}")
+    def __init__(self, name, join=None):
+        super().__init__(f"https://api.adalo.com/v0/apps/{APP_ID}/collections/{name}", join)
