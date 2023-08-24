@@ -1,36 +1,49 @@
-# Baku Collections
+# Adalo Collections
 ![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
 
 ## Instalación
 
 ```bash
-pip install git+https://github.com/lastseal/baku-api
+pip install git+https://github.com/lastseal/adalo-api
 ```
 
-## Ejemplos
+## Tutorial
 
-Lectura de registros de una colección. En el ejemplo, el nombre de la colección es ```pruebas``` y la estrucuta del registro JSON es el siguiente:
+### Paso 1: Configurar Variables de Ambiente
 
-```json
-{
-    "name": "nombre de la prueba",
-    "list": ["data1", "data2"],
-    "object": {
-        "flag": true,
-        "channel": "test"
-    }
-}
+En un archivo ```.env``` agregar el id de la aplicación en Adalo y el Api Key de acceso.
+
+```txt
+APP_ID=c3d3ad91-c569-47b7-bbab-a40823e02f6a
+API_KEY=82goso92zcemcn1ecw8lyzvie
 ```
 
-Se busca la prueba de nombre ```test-1``` con la variable ```name``` del registro.
+### Paso 2: Importar Módulo
+
+En tu código importar el módulo y configurar la colección con la que se va a trabajar.
 
 ```python
-from baku import api
+from adalo import api
 
-pruebas = api.Collection("pruebas")
+multimedia = api.Collection("t_bfmoi0f5mg6a1qj8crygzfami")
+```
 
-data = prueba.findOne({"name": "test-1"})
-print("name:", data.name)
-print("list.0:", data.list[0])
-print("object.flag:", data.object['flag'])
+### Paso 3: Leer Datos de la Colección
+
+Se buscan los datos de la colección de Adalo desde una fecha en adelante.
+
+```python
+multimedia = api.Collection("t_bfmoi0f5mg6a1qj8crygzfami")
+
+items = multimedia.findAll({"created_at_min": "2023-07-26/00:00:00"})
+print(items)
+```
+
+Para buscar todos los registros de la colección no se le pasa ningún parámetro.
+
+```python
+multimedia = api.Collection("t_bfmoi0f5mg6a1qj8crygzfami")
+
+items = multimedia.findAll()
+print(items)
 ```
