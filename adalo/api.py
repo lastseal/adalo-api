@@ -52,7 +52,7 @@ class Session(requests.Session):
         self.url = url
         self.headers.update({"Authorization": f"Bearer {API_KEY}"})
         
-    def findAll(self, params=None):
+    def findAll(self, params={}):
 
         logging.debug("finding in %s with %s", self.url, params)
 
